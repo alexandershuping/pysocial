@@ -1,0 +1,9 @@
+{
+	"db_name":"social_py",
+	"db_user":"social_py",
+	"db_password":"<PUT_DATABASE_PASSWORD_HERE>",
+	"db_host":"127.0.0.1",
+	"db_port":"5432",
+
+	"table_prefix":"socialpy_"
+}

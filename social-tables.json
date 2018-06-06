@@ -1,5 +1,19 @@
 [
 	{
+		"name" : "files",
+		"schema" : [
+			{
+				"name" : "name",
+				"type" : "TEXT"
+			},
+			{
+				"name" : "id",
+				"type" : "INTEGER",
+				"primary" : true
+			}
+		]
+	},
+	{
 		"name" : "nodes",
 		"schema" : [
 			{
@@ -8,7 +22,12 @@
 			},
 			{
 				"name" : "id",
-				"type" : "INTEGER"
+				"type" : "INTEGER",
+				"primary" : true
+			},
+			{
+				"name":"parent_file_id",
+				"type":"INTEGER"
 			}
 		]
 	},
@@ -34,7 +53,12 @@
 			},
 			{
 				"name" : "id",
-				"type" : "INTEGER"
+				"type" : "INTEGER",
+				"primary" : true
+			},
+			{
+				"name":"parent_file_id",
+				"type":"INTEGER"
 			}
 		]
 	},
