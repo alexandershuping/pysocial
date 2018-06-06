@@ -1,0 +1,26 @@
+{
+	"text":"Pysocial CLI help menu\nType `help <command>` for help with a specific command",
+	"sub":{
+		"warranty":{
+			"text":"Pysocial is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.",
+			"sub":{}
+		},
+		"copying":{
+			"text":"Pysocial is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nPysocial is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with Pysocial.  If not, see <http://www.gnu.org/licenses/>.",
+			"sub":{}
+		},
+		"exit":{
+			"text":"Terminates the program.",
+			"sub":{}
+		},
+		"add":{
+			"text":"Adds a node or group of nodes to the network\nSyntax: `add <node> [additional nodes]`",
+			"sub":{
+				"naming":{
+					"text":"Node names can consist of multiple characters - surround multi-character names with single-quotes, or use \\ to escape the spaces. Also use \\ to escape semicolon (;) characters.",
+					"sub":{}
+				}
+			}
+		}
+	}
+}

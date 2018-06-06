@@ -50,3 +50,7 @@ def test_fun():
 	u = basic_console_ui()
 
 	return [u,c,t]
+
+u = basic_console_ui()
+if u.begin() == 0:
+	u.loop()
