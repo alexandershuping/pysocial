@@ -1,0 +1,78 @@
+[
+	{
+		"name" : "files",
+		"schema" : [
+			{
+				"name" : "name",
+				"type" : "TEXT"
+			},
+			{
+				"name" : "id",
+				"type" : "INTEGER",
+				"primary" : true
+			}
+		]
+	},
+	{
+		"name" : "nodes",
+		"schema" : [
+			{
+				"name" : "name",
+				"type" : "TEXT"
+			},
+			{
+				"name" : "id",
+				"type" : "INTEGER",
+				"primary" : true
+			},
+			{
+				"name":"parent_file_id",
+				"type":"INTEGER"
+			}
+		]
+	},
+	{
+		"name" : "connections",
+		"schema" : [
+			{
+				"name" : "first_id",
+				"type" : "INTEGER"
+			},
+			{
+				"name" : "second_id",
+				"type" : "INTEGER"
+			}
+		]
+	},
+	{
+		"name" : "tags",
+		"schema" : [
+			{
+				"name" : "name",
+				"type" : "TEXT"
+			},
+			{
+				"name" : "id",
+				"type" : "INTEGER",
+				"primary" : true
+			},
+			{
+				"name":"parent_file_id",
+				"type":"INTEGER"
+			}
+		]
+	},
+	{
+		"name" : "tag_associations",
+		"schema" : [
+			{
+				"name" : "id",
+				"type" : "INTEGER"
+			},
+			{
+				"name" : "tag",
+				"type" : "INTEGER"
+			}
+		]
+	}
+]
