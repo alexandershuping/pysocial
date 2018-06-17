@@ -9,9 +9,33 @@
 			"text":"Pysocial is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nPysocial is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with Pysocial.  If not, see <http://www.gnu.org/licenses/>.",
 			"sub":{}
 		},
+		"files":{
+			"text":"'Files' in pysocial are individual graphs - though all of the node and connection data are stored in the same database, each node is associated with a 'file'.\n\nIn order to work on a graph, you need to open the relevant file with the `open <file>` command.\n\nTo see a list of all files, use the `listfiles` command.\n\nTo render a graph from a file, open it and then use the `render` command.",
+			"sub":{}
+		},
 		"exit":{
 			"text":"Terminates the program.",
-			"sub":{}
+			"sub":{
+				"aliases":{"text":"Aliases for the 'exit' command are: x","sub":{}}
+			}
+		},
+		"open":{
+			"text":"Opens a file in the database\nSyntax: `open <file>`",
+			"sub":{
+				"aliases":{"text":"Aliases for the 'open' command are: o","sub":{}}
+			}
+		},
+		"listnodes":{
+			"text":"Lists all nodes in the current file, or in the entire database if no files are open\nSyntax: `listnodes`",
+			"sub":{
+				"aliases":{"text":"Aliases for the 'listnodes' command are: ln","sub":{}}
+			}
+		},
+		"listfiles":{
+			"text":"Lists all files in the database\nSyntax: `listfiles`",
+			"sub":{
+				"aliases":{"text":"Aliases for the 'listfiles' command are: lf","sub":{}}
+			}
 		},
 		"add":{
 			"text":"Adds a node or group of nodes to the network\nSyntax: `add <node> [additional nodes]`",
@@ -19,7 +43,14 @@
 				"naming":{
 					"text":"Node names can consist of multiple characters - surround multi-character names with single-quotes, or use \\ to escape the spaces. Also use \\ to escape semicolon (;) characters.",
 					"sub":{}
-				}
+				},
+				"aliases":{"text":"Aliases for the 'add' command are: a","sub":{}}
+			}
+		},
+		"render":{
+			"text":"Renders a graph as an image file\nSyntax: `render [path]`\n\nNote that the [path] parameter is optional - it defaults to `render_output.png`",
+			"sub":{
+				"aliases":{"text":"Aliases for the 'render' command are: r","sub":{}}
 			}
 		}
 	}

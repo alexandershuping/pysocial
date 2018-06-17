@@ -8,7 +8,7 @@
 			},
 			{
 				"name" : "id",
-				"type" : "INTEGER",
+				"type" : "BIGINT",
 				"primary" : true
 			}
 		]
@@ -22,12 +22,12 @@
 			},
 			{
 				"name" : "id",
-				"type" : "INTEGER",
+				"type" : "BIGINT",
 				"primary" : true
 			},
 			{
 				"name":"parent_file_id",
-				"type":"INTEGER"
+				"type":"BIGINT"
 			}
 		]
 	},
@@ -36,11 +36,20 @@
 		"schema" : [
 			{
 				"name" : "first_id",
-				"type" : "INTEGER"
+				"type" : "BIGINT"
 			},
 			{
 				"name" : "second_id",
-				"type" : "INTEGER"
+				"type" : "BIGINT"
+			},
+			{
+				"name" : "connection_id",
+				"type" : "BIGINT",
+				"primary" : true
+			},
+			{
+				"name":"parent_file_id",
+				"type":"BIGINT"
 			}
 		]
 	},
@@ -53,12 +62,16 @@
 			},
 			{
 				"name" : "id",
-				"type" : "INTEGER",
+				"type" : "BIGINT",
 				"primary" : true
 			},
 			{
+				"name":"contents",
+				"type":"TEXT"
+			},
+			{
 				"name":"parent_file_id",
-				"type":"INTEGER"
+				"type":"BIGINT"
 			}
 		]
 	},
@@ -67,11 +80,11 @@
 		"schema" : [
 			{
 				"name" : "id",
-				"type" : "INTEGER"
+				"type" : "BIGINT"
 			},
 			{
 				"name" : "tag",
-				"type" : "INTEGER"
+				"type" : "BIGINT"
 			}
 		]
 	}

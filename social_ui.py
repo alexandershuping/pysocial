@@ -29,6 +29,12 @@ class polymorphism_error(BaseException):
 
 
 class ui:
+	'''
+	  ' Base class for polymorphism. DO NOT initialize it - if you need a
+		' UI that does nothing, you want none_ui, not this. If you need a
+		' console UI, you want basic_console_ui, not this. This will angrily
+		' throw exceptions at you if you try to do anything with it.
+	'''
 	def __init__(self):
 		pass
 	
@@ -60,53 +66,88 @@ class ui:
 		raise polymorphism_error('Cannot call a method from an abstract class!')
 
 
+class none_ui(ui):
+	'''
+	  ' Convenience class to make logging functions easier. All logging
+		' requests do nothing, and prompt_yn always returns the default.
+	'''
+	def __init__(self):
+		pass
+	
+	def begin(self):
+		pass
+	
+	def loop(self):
+		pass
+	
+	def write(self, message):
+		pass
+	
+	def log(self, message, level=5):
+		pass
+
+	def log_debug(self, message):
+		pass
+	
+	def log_warning(self, message):
+		pass
+	
+	def log_error(self, message):
+		pass
+	
+	def log_severe(self, message):
+		pass
+	
+	def log_severe(self, message):
+		pass
+	
+	def prompt_yn(self, prompt_text, default_resp=False):
+		return default_resp
+
 
 class basic_console_ui(ui):
 
-	def __init__(self):
+	def __init__(self, config, db_io, rend):
 		with open('social-help.json') as hmenu:
 			self.help_dict = json.load(hmenu)
+			self.config = config
+			self.db = db_io
+			self.rend = rend
 
 		self.command_lut = {
 			'exit':self.cmd_exit,
-			'help':self.cmd_help
+			'x':self.cmd_exit,
+			'help':self.cmd_help,
+			'?':self.cmd_help,
+			'h':self.cmd_help,
+			'add':self.cmd_add,
+			'a':self.cmd_add,
+			'connect':self.cmd_connect,
+			'cc':self.cmd_connect,
+			'open':self.cmd_open,
+			'o':self.cmd_open,
+			'listnodes':self.cmd_list_nodes,
+			'ln':self.cmd_list_nodes,
+			'listconnections':self.cmd_list_connections,
+			'lc':self.cmd_list_connections,
+			'listfiles':self.cmd_list_files,
+			'lf':self.cmd_list_files,
+			'render':self.cmd_render,
+			'r':self.cmd_render
 			# TODO: add new commands here. The command name goes before the :,
 			# and the name of the function to call goes after it.
 		}
 		self.keep_going = True
 
 	def begin(self):
-		# TODO: configuration loading and database object creation is only
-		# here for testing purposes. Move it out of the UI class.
-		from social_db import db_connect
-		self.write('Attempting to load configuration...')
-		self.log('Loading config.json...')
-		
-		try:
-			with open('config.json') as config:
-				self.config = json.load(config)
-		except FileNotFoundError:
-			self.log_severe('Could not find config.json! Aborting startup!')
+		self.log('Hooking and starting database connection.')
+		self.db.hook_ui(self)
+		rcode = self.db.begin()
+		if rcode > 0:
+			self.log_severe('FAILED TO CONNECT TO DATABASE! PROGRAM CANNOT CONTINUE!')
 			return 1
-		except json.decoder.JSONDecodeError:
-			self.log_severe('Could not parse config.json! Aborting startup!')
-			return 1
-		else:
-			self.write('Success!')
 
-		self.write('Attempting to connect to database...')
-
-		self.log('Loading table schema from social-tables.json...')
-		try:
-			with open('social-tables.json') as tables:
-				self.schema = json.load(tables)
-		except FileNotFoundError:
-			self.log_severe('Could not find social-tables.json! Aborting startup!')
-			return 1
-		except json.decoder.JSONDecodeError:
-			self.log_severe('Could not parse social-tables.json! Aborting startup!')
-			return 1
-		self.database = db_connect(self, self.config, self.schema)
+		self.rend.hook_ui(self)
 
 		print('\n\n\nPysocial Copyright (C) 2018 Alexander Shuping')
 		print('This program comes with ABSOLUTELY NO WARRANTY; for details type `help warranty`.')
@@ -117,7 +158,11 @@ class basic_console_ui(ui):
 
 	def loop(self):
 		while self.keep_going:
-			cmd = input('[pysocial] > ')
+			prompt_string = '[pysocial] '
+			cur_file = self.db.current_file()
+			if cur_file:
+				prompt_string = prompt_string + cur_file + ' '
+			cmd = input(prompt_string + '>')
 			carryover = self.parse(cmd)
 			while carryover and self.keep_going:
 				carryover = self.parse(carryover)
@@ -223,6 +268,101 @@ class basic_console_ui(ui):
 				topics_string = topics_string + subcommand + ' '
 
 			self.write(topics_string + '\nType `' + working_command + ' <topic>` for more information.\n')
+	
+
+	def cmd_open(self, args):
+		if len(args) == 1:
+			self.db.open_file_by_name(args[0])
+		elif len(args) == 2 and args[0] == '-i':
+			self.db.open_file_by_id(args[1])
+		else:
+			self.cmd_help(['open'])
+
+
+	def cmd_add(self, args):
+		if len(args) == 0:
+			self.cmd_help(['add'])
+		elif not self.db.current_file():
+			self.log_warning('Cannot add node with no open file.')
+			return
+		else:
+			for node_name in args:
+				if ':' in node_name:
+					self.log_error('Reserved character ":" cannot be used in names. Node "' + str(node_name) + '" could not be added.')
+				else:
+					self.db.add_node(str(node_name))
+	
+	
+	def cmd_connect(self, args):
+		parsed_args = []
+		if len(args) == 2:
+			for name in args:
+				if ':' in name:
+					semi_pos = name.find(':')
+					parsed_args.append({'name':str(name[:semi_pos]),'discrim':int(name[semi_pos+1:])})
+				else:
+					parsed_args.append({'name':str(name),'discrim':None})
+			
+			from social import name_conflict_error
+			try:
+				self.db.add_connection_by_name(parsed_args[0]['name'], parsed_args[1]['name'], parsed_args[0]['discrim'], parsed_args[1]['discrim'])
+			except name_conflict_error:
+				self.write('It looks like some of your nodes have the same name. See `help discrim` to learn how to fix this.')
+		elif len(args) == 3 and args[0] == '-i':
+			self.db.add_connection_by_id(args[1],args[2])
+		else:
+			self.cmd_help(['connect'])
+	
+
+	def cmd_list_nodes(self, args):
+		nodes = self.db.list_nodes()
+		if self.db.current_file():
+			self.write('Listing nodes in current file...')
+		else:
+			self.write('Listing all nodes in all files...')
+
+		for node in nodes:
+			self.write('  "' + str(node[0]) + '" with id ' + str(node[1]) + ' (discrim ' + str(abs(node[1]) % 100000) + ')')
+	
+	
+	def cmd_list_connections(self, args):
+		cxns = self.db.list_connections()
+		if self.db.current_file():
+			self.write('Listing connections in current file...')
+		else:
+			self.write('Listing all connections in all files...')
+
+		for cxn in cxns:
+			self.write('  ' + str(cxn[0]) + ' to ' + str(cxn[1]) + ' with id ' + str(cxn[2]))
+	
+
+	def cmd_list_files(self, args):
+		files = self.db.list_files()
+		self.write('Current files:')
+		for file_obj in files:
+			self.write('  "' + str(file_obj[0]) + '" with id ' + str(file_obj[1]))
+
+	
+	def cmd_render(self, args):
+		output_path = 'render_output.png'
+		if len(args) == 0:
+			pass
+		elif len(args) == 1:
+			output_path = str(args[0])
+		else:
+			self.cmd_help(['render'])
+		
+		self.write('Rendering graph to ' + str(output_path))
+		ret = self.rend.render(output_path)
+
+		if ret == 0:
+			self.write('Success.')
+		elif ret == 1:
+			self.log_severe('DATABASE ERROR WHILE RENDERING.')
+		elif ret == 2:
+			self.log_error('No file open in database.')
+		else:
+			self.log_error('Unknown error while rendering.')
 	
 
 	def unknown_command(self, command_text):

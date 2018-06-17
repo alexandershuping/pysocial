@@ -191,6 +191,7 @@ class db_connect:
 		else:
 			return 0
 	
+
 	def setup_tables(self, force=False):
 		'''
 		  ' Sets up the proper tables in the postgresql database
@@ -242,3 +243,17 @@ class db_connect:
 					self.ui.log('Creating table ' + tname + ' with command ' + cmd)
 					cur.execute(cmd) # create table
 			self.db.commit()
+	
+
+	def tablify(self, tname):
+		return str(self.table_prefix) + str(tname)
+	
+
+	def cursor(self):
+		return self.db.cursor()
+	
+	def commit(self):
+		return self.db.commit()
+	
+	def rollback(self):
+		return self.db.rollback()
